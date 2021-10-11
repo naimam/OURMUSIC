@@ -3,8 +3,14 @@ import random
 from dotenv import find_dotenv, load_dotenv
 from flask import Flask, render_template, request, redirect
 from spot import get_artist_info, get_lyrics
-from models import db, login, Person, Artist
-from flask_login import login_required, current_user, login_user, logout_user
+from flask_login import (
+    LoginManager,
+    login_required,
+    current_user,
+    login_user,
+    logout_user,
+)
+from flask_sqlalchemy import SQLAlchemy
 
 
 load_dotenv(find_dotenv())
@@ -21,9 +27,12 @@ app.config["SQLALCHEMY_DATABASE_URI"] = url
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SECRET_KEY"] = SECRET_KEY
 
-db.init_app(app)
-login.init_app(app)
+db = SQLAlchemy(app)
+login = LoginManager(app)
 login.login_view = "login"
+
+
+from models import Person, Artist
 
 
 @app.before_first_request
