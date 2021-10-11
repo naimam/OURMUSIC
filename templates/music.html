@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<link rel="icon" href="{{img}}" />
+	<link rel="stylesheet" href={{ url_for( 'static' , filename='style.css' ) }} />
+	<title>{{ current_user.username }}'s music!</title>
+	<!-- Fonts -->
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+	<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@600;700&family=Roboto:wght@500;700&display=swap"
+		rel="stylesheet" />
+	<!-- Icons -->
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
+		integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous" />
+</head>
+
+<body>
+	<div class="topnav">
+		<h1>
+			<a href="https://github.com/csc4350-f21/project1-nmohamed6"><i class="fab fa-github"></i></a>
+		</h1>
+		<h1>{{ current_user.username }}'s music!</h1>
+		<h1><a href="{{ url_for('logout')}}">
+				<i class="fas fa-sign-out-alt"></i></a>
+		</h1>
+	</div>
+	<main id="main">
+		<div>
+			<p>Refresh page to get a new artist and a random song!</p>
+		</div>
+		<div class="row">
+			<div class="column">
+				<div class="card">
+					<h1 id="title">
+						Artist: {{name}}
+					</h1>
+					<img id="artistImg" src="{{img}}" />
+				</div>
+
+				<div class="card">
+					<h2>Top Tracks</h2>
+					<ol>
+						{%for i in range(0, len)%}
+						{% if topTracks[i] == trackName %}
+						<li class="np">{{topTracks[i]}}</li>
+
+						{% else %}
+						<li>{{topTracks[i]}}</li>
+
+						{% endif %}
+						{%endfor%}
+					</ol>
+				</div>
+
+			</div>
+
+			<div class="column">
+				<div class="card">
+					<h1 id="title">Now Playing: {{trackName}}</h1> <img src="{{trackImg}}" />
+					<audio controls>
+						<source src="{{trackAudio}}" type="audio/mpeg" /> Audio file not supported for specific track.
+						Refresh browser to get new one!
+					</audio>
+					<p> NOTE: If audio player is not playing, the audio file is not available for this specific track.
+						Refresh your browser to get new one!</p>
+					<br /> <a href="{{lyricLink}}">Genius Lyrics</a>
+				</div>
+			</div>
+		</div>
+	</main>
+	<div class="footer"> Created by Naima Mohamed
+		<br /> Icons by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a
+			href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>
+	</div>
+</body>
+
+</html>
