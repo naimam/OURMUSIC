@@ -4,6 +4,7 @@ from dotenv import find_dotenv, load_dotenv
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, render_template
 from spot import get_artist_info, get_lyrics
+from flask_login import LoginManager, login_required, current_user, login_user
 
 load_dotenv(find_dotenv())
 url = os.getenv("DATABASE_URL")
@@ -18,14 +19,22 @@ app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 0
 app.config["SQLALCHEMY_DATABASE_URI"] = url
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SECRET_KEY"] = SECRET_KEY
+login = LoginManager(app)
+login.login_view = "login"
 
 db = SQLAlchemy(app)
 
 from models import Person, Artist
 
 
-@app.route("/", methods=["GET", "POST"])
-def main():
+@app.route("/")
+def welcome():
+    return render_template("index.html")
+
+
+@app.route("/index")
+@login_required
+def index():
     ARTIST_IDS = [
         "78rUTD7y6Cy67W1RVzYs7t",
         "2xvtxDNInKDV4AvGmjw6d1",
