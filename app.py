@@ -89,6 +89,9 @@ def login():
 
 @app.route("/register", methods=["POST", "GET"])
 def register():
+    if current_user.is_authenticated:
+        return redirect("/")
+
     if request.method == "POST":
         username = request.form["username"]
 
@@ -99,7 +102,7 @@ def register():
         user = Person(username=username)
         db.session.add(user)
         db.session.commit()
-        flash("Account creation successful! Login with your username below!")
+        flash("Account creation successful!")
         return redirect("/login")
     return render_template("register.html")
 
@@ -129,8 +132,6 @@ def index():
     for artists in user_artists:
         if artists.artist_id not in user_artist_ids:
             user_artist_ids.append(artists.artist_id)
-
-    flash(user_artist_ids)
 
     try:
         ARTIST_IDS = user_artist_ids
