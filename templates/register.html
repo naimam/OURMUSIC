@@ -1,22 +1,24 @@
-<html>
-    <head>
+{% extends "base.html" %}
 
-    </head>
-    <body>
-        <form action="/register" method="POST">
-            <input type="text" name="username" placeholder="Username" required>
-            <input type="submit" value="Sign up!">
-        </form>
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            {% for message in messages %}
-                {{ message }}
-            {% endfor %}
-        {% endif %}
-        {% endwith %}
+	
+{% block title %}Register{% endblock %}
 
-        <h3>Have an account?</h3>
-        <h3><a href="{{url_for('login') }}">Log in Here</a></h3>
-</body>
+{% block menu %} Register {% endblock %}
 
-</html>
+{% block main %}
+    <form action="/register" method="POST">
+        <input type="text" name="username" placeholder="Username" required>
+        <input type="submit" value="Sign up!">
+    </form>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        {% for message in messages %}
+            {{ message }}
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    <h3>Have an account?</h3>
+    <h3><a href="{{url_for('login') }}">Log in Here</a></h3>
+
+{% endblock %}
