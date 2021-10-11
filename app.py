@@ -36,30 +36,29 @@ login.login_view = "login"
 
 
 class Person(db.Model, UserMixin):
-    __tablename__ = "users"
-    user_id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), nullable=False)
-    artists = db.relationship("Artist", backref="users", lazy=True)
+    artists = db.relationship("Artist", backref="person", lazy=True)
 
     def __repr__(self):
         return "<Username: {}>".format(self.username)
 
     def get_id(self):
-        return self.user_id
+        return self.id
 
 
 class Artist(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     artist_id = db.Column(db.String(22))
-    person_id = db.Column(db.Integer, db.ForeignKey("users.user_id"))
+    person_id = db.Column(db.Integer, db.ForeignKey("person.id"))
 
     def __repr__(self):
         return "<Artist Id: {}>".format(self.artist_id)
 
 
 @login.user_loader
-def load_user(user_id):
-    return Person.query.get(user_id)
+def load_user(id):
+    return Person.query.get(id)
 
 
 @app.errorhandler(401)
@@ -70,41 +69,6 @@ def page_not_found(e):
 @app.before_first_request
 def create_table():
     db.create_all()
-
-
-@app.route("/")
-@login_required
-def index():
-    ARTIST_IDS = [
-        "78rUTD7y6Cy67W1RVzYs7t",
-        "2xvtxDNInKDV4AvGmjw6d1",
-        "1CbA4z6JauNQnHzOErDQL6",
-        "3x2XRFCUMHeXZ9uRit3pKu",
-        "2SJhf6rTOU53g8yBdAjPby",
-        "73sIBHcqh3Z3NyqHKZ7FOL",
-        "2sSGPbdZJkaSE2AbcGOACx",
-    ]
-    artist_len = len(ARTIST_IDS) - 1
-    random_artist = random.randint(0, artist_len)
-    artist = ARTIST_IDS[random_artist]
-
-    (name, img, track, topTracks) = get_artist_info(artist)
-    (trackName, trackAudio, trackImg) = track
-
-    lyricLink = get_lyrics(name, trackName)
-
-    return render_template(
-        "music.html",
-        name=name,
-        img=img,
-        len=len(topTracks),
-        topTracks=topTracks,
-        track=track,
-        trackName=trackName,
-        trackImg=trackImg,
-        trackAudio=trackAudio,
-        lyricLink=lyricLink,
-    )
 
 
 @app.route("/login", methods=["POST", "GET"])
@@ -125,9 +89,6 @@ def login():
 
 @app.route("/register", methods=["POST", "GET"])
 def register():
-    if current_user.is_authenticated:
-        return redirect("/")
-
     if request.method == "POST":
         username = request.form["username"]
 
@@ -141,6 +102,64 @@ def register():
         flash("Account creation successful! Login with your username below!")
         return redirect("/login")
     return render_template("register.html")
+
+
+@app.route("/", methods=["POST", "GET"])
+@login_required
+def index():
+    if request.method == "POST":
+        artistID = request.form.get("artistId")
+        try:
+            get_artist_info(artistID)
+        except:
+            flash("Invalid Spotify Artist ID!")
+            return redirect("/")
+
+        currentUser = Person.query.filter_by(username=current_user.username).first()
+        artist = Artist(artist_id=artistID, person=currentUser)
+
+        db.session.add(artist)
+        db.session.commit()
+
+        flash("Artist added!")
+
+    currentUser = Person.query.filter_by(username=current_user.username).first()
+    user_artists = currentUser.artists
+    user_artist_ids = []
+    for artists in user_artists:
+        if artists.artist_id not in user_artist_ids:
+            user_artist_ids.append(artists.artist_id)
+
+    flash(user_artist_ids)
+
+    try:
+        ARTIST_IDS = user_artist_ids
+        artist_len = len(ARTIST_IDS)
+        random_artist = random.randint(0, artist_len - 1)
+
+    except:
+        ARTIST_IDS = ["5cj0lLjcoR7YOSnhnX0Po5"]  # doja cat
+        artist_len = 0
+        random_artist = 0
+
+    artist = ARTIST_IDS[random_artist]
+    (name, img, track, topTracks) = get_artist_info(artist)
+    (trackName, trackAudio, trackImg) = track
+    lyricLink = get_lyrics(name, trackName)
+
+    return render_template(
+        "music.html",
+        artist_len=artist_len,
+        name=name,
+        img=img,
+        len=len(topTracks),
+        topTracks=topTracks,
+        track=track,
+        trackName=trackName,
+        trackImg=trackImg,
+        trackAudio=trackAudio,
+        lyricLink=lyricLink,
+    )
 
 
 @app.route("/logout")

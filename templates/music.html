@@ -29,47 +29,64 @@
 	</div>
 	<main id="main">
 		<div>
-			<p>Refresh page to get a new artist and a random song!</p>
+			<p>Add an artist ID!</p>
+			<form method="POST">
+				<input type="text" name="artistId" placeholder="Artist ID" required>
+				<input type="submit" value="Submit!">
+			</form>
+			{% with messages = get_flashed_messages() %}
+			{% if messages %}
+				{% for message in messages %}
+					{{ message }}
+				{% endfor %}
+			{% endif %}
+			{% endwith %}
+
 		</div>
-		<div class="row">
-			<div class="column">
-				<div class="card">
-					<h1 id="title">
-						Artist: {{name}}
-					</h1>
-					<img id="artistImg" src="{{img}}" />
+		{% if artist_len == 0 %}
+			<p> Looks like you haven't added any artists yet... </p>
+		{% else %}
+			<div class="row">
+				<div class="column">
+					<div class="card">
+						<h1 id="title">
+							Artist: {{name}}
+						</h1>
+						<img id="artistImg" src="{{img}}" />
+					</div>
+
+					<div class="card">
+						<h2>Top Tracks</h2>
+						<ol>
+							{%for i in range(0, len)%}
+							{% if topTracks[i] == trackName %}
+							<li class="np">{{topTracks[i]}}</li>
+
+							{% else %}
+							<li>{{topTracks[i]}}</li>
+
+							{% endif %}
+							{%endfor%}
+						</ol>
+					</div>
+
 				</div>
 
-				<div class="card">
-					<h2>Top Tracks</h2>
-					<ol>
-						{%for i in range(0, len)%}
-						{% if topTracks[i] == trackName %}
-						<li class="np">{{topTracks[i]}}</li>
-
-						{% else %}
-						<li>{{topTracks[i]}}</li>
-
-						{% endif %}
-						{%endfor%}
-					</ol>
+				<div class="column">
+					<div class="card">
+						<h1 id="title">Now Playing: {{trackName}}</h1> <img src="{{trackImg}}" />
+						<audio controls>
+							<source src="{{trackAudio}}" type="audio/mpeg" /> Audio file not supported for specific track.
+							Refresh browser to get new one!
+						</audio>
+						<p> NOTE: If audio player is not playing, the audio file is not available for this specific track.
+							Refresh your browser to get new one!</p>
+						<br /> <a href="{{lyricLink}}">Genius Lyrics</a>
+					</div>
 				</div>
-
 			</div>
-
-			<div class="column">
-				<div class="card">
-					<h1 id="title">Now Playing: {{trackName}}</h1> <img src="{{trackImg}}" />
-					<audio controls>
-						<source src="{{trackAudio}}" type="audio/mpeg" /> Audio file not supported for specific track.
-						Refresh browser to get new one!
-					</audio>
-					<p> NOTE: If audio player is not playing, the audio file is not available for this specific track.
-						Refresh your browser to get new one!</p>
-					<br /> <a href="{{lyricLink}}">Genius Lyrics</a>
-				</div>
-			</div>
-		</div>
+		{% endif %}
+		
 	</main>
 	<div class="footer"> Created by Naima Mohamed
 		<br /> Icons by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a
