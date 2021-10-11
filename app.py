@@ -21,14 +21,7 @@ app.config["SECRET_KEY"] = SECRET_KEY
 
 db = SQLAlchemy(app)
 
-
-class Person(db.Model):
-    user_id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(50), nullable=False)
-    artist = db.Column(db.String(22))
-
-
-db.create_all()
+from models import Person, Artist
 
 
 @app.route("/", methods=["GET", "POST"])
