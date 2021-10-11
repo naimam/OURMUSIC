@@ -9,6 +9,7 @@ from flask_login import (
     current_user,
     login_user,
     logout_user,
+    UserMixin,
 )
 from flask_sqlalchemy import SQLAlchemy
 
@@ -27,12 +28,38 @@ app.config["SQLALCHEMY_DATABASE_URI"] = url
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SECRET_KEY"] = SECRET_KEY
 
-db = SQLAlchemy(app)
-login = LoginManager(app)
+db = SQLAlchemy()
+db.init_app(app)
+login = LoginManager()
+login.init_app(app)
 login.login_view = "login"
 
 
-from models import Person, Artist
+class Person(db.Model, UserMixin):
+    __tablename__ = "users"
+    user_id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(50), nullable=False)
+    artists = db.relationship("Artist", backref="users", lazy=True)
+
+    def __repr__(self):
+        return "<Username: {}>".format(self.username)
+
+    def get_id(self):
+        return self.user_id
+
+
+class Artist(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    artist_id = db.Column(db.String(22))
+    person_id = db.Column(db.Integer, db.ForeignKey("users.user_id"))
+
+    def __repr__(self):
+        return "<Artist Id: {}>".format(self.artist_id)
+
+
+@login.user_loader
+def load_user(user_id):
+    return Person.query.get(user_id)
 
 
 @app.before_first_request
@@ -40,7 +67,7 @@ def create_table():
     db.create_all()
 
 
-@app.route("/music")
+@app.route("/")
 @login_required
 def music():
     ARTIST_IDS = [
@@ -86,14 +113,14 @@ def music():
 @app.route("/login", methods=["POST", "GET"])
 def login():
     if current_user.is_authenticated:
-        return redirect("/music")
+        return redirect("/")
 
     if request.method == "POST":
         username = request.form["username"]
         user = Person.query.filter_by(username=username).first()
         if user is not None:
             login_user(user)
-            return redirect("/music")
+            return redirect("/")
 
     return render_template("login.html")
 
@@ -101,7 +128,7 @@ def login():
 @app.route("/register", methods=["POST", "GET"])
 def register():
     if current_user.is_authenticated:
-        return redirect("/music")
+        return redirect("/")
 
     if request.method == "POST":
         username = request.form["username"]
@@ -119,7 +146,7 @@ def register():
 @app.route("/logout")
 def logout():
     logout_user()
-    return redirect("/music")
+    return redirect("/")
 
 
 app.run(
