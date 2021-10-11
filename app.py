@@ -1,7 +1,7 @@
 import os
 import random
 from dotenv import find_dotenv, load_dotenv
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, Response, flash
 from spot import get_artist_info, get_lyrics
 from flask_login import (
     LoginManager,
@@ -62,6 +62,11 @@ def load_user(user_id):
     return Person.query.get(user_id)
 
 
+@app.errorhandler(401)
+def page_not_found(e):
+    return Response("<p>Login failed</p>")
+
+
 @app.before_first_request
 def create_table():
     db.create_all()
@@ -69,7 +74,7 @@ def create_table():
 
 @app.route("/")
 @login_required
-def music():
+def index():
     ARTIST_IDS = [
         "78rUTD7y6Cy67W1RVzYs7t",
         "2xvtxDNInKDV4AvGmjw6d1",
@@ -81,18 +86,10 @@ def music():
     ]
     artist_len = len(ARTIST_IDS) - 1
     random_artist = random.randint(0, artist_len)
-    artist_info = get_artist_info(ARTIST_IDS[random_artist])
-    # ARTIST INFO
-    name = artist_info[0]
-    img = artist_info[1]
+    artist = ARTIST_IDS[random_artist]
 
-    # TRACK INFO
-    track = artist_info[2]
-    trackName = track[0]
-    trackAudio = track[1]
-    trackImg = track[2]
-
-    topTracks = artist_info[3]
+    (name, img, track, topTracks) = get_artist_info(artist)
+    (trackName, trackAudio, trackImg) = track
 
     lyricLink = get_lyrics(name, trackName)
 
@@ -121,7 +118,8 @@ def login():
         if user is not None:
             login_user(user)
             return redirect("/")
-
+        if user is None:
+            flash("Invalid username!")
     return render_template("login.html")
 
 
@@ -134,11 +132,13 @@ def register():
         username = request.form["username"]
 
         if Person.query.filter_by(username=username).first():
-            return "Username is taken!"
+            flash("Username is taken!")
+            return redirect("/register")
 
         user = Person(username=username)
         db.session.add(user)
         db.session.commit()
+        flash("Account creation successful! Login with your username below!")
         return redirect("/login")
     return render_template("register.html")
 

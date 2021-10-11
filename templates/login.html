@@ -1,7 +1,22 @@
-<form action="" method="POST">
-    <input type="text" name="username" placeholder="Username">
-    <input type="submit" value="Login!">
-</form>
+<html>
+    <head>
 
-<h3>Dont Have an account?</h3>
-<h3><a href="{{url_for('register') }}">Register Here</a></h3>
+    </head>
+    <body>
+        <form action="/login" method="POST">
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="submit" value="Login!">
+        </form>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <h3>Dont Have an account?</h3>
+        <h3><a href="{{url_for('register') }}">Register Here</a></h3>
+</body>
+
+</html>
