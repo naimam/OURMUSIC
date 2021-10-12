@@ -1,4 +1,6 @@
 Flask
-spotipy
+Flask-Login
+Flask-SQLAlchemy
 requests
 python-dotenv
+SQLAlchemy
