@@ -7,8 +7,8 @@
   body {
    
     margin: 0;
-    background: rgb(0,0,0);
-    background: linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(48,129,57,1) 100%);
+    background: rgb(0,0,0) url('spotify-bg.png')  no-repeat fixed center;
+    background-size: cover;
 
   }
   
@@ -21,6 +21,12 @@
     line-height: 35px;
     text-transform: none;
     color: var(--white);
+  }
+
+  h3{
+    color: var(--black);
+    font-size: 20px;
+    font-family: "Roboto", sans-serif;
   }
 
   p{
@@ -56,8 +62,8 @@
   }
   
   a:hover {
-    color: var(--white);
-    text-decoration: none;
+    color: var(--green);
+    text-decoration: underline wavy var(--green);
   }
   
   main {
@@ -186,9 +192,34 @@
     left: 0;
     bottom: 0;
     width: 100%;
-    background-color: var(--black);
     color: var(--white);
     text-align: center;
     font-family: "Roboto", sans-serif;
   }
   
+
+  .flashes p {
+    color: red;
+}
+
+input[type=text] {
+  font-size: 20px;
+  border: 2px solid var(--green);
+  border-radius: 4px;
+  padding: 5px 5px;
+}
+
+input[type=submit]{
+  font-size: 20px;
+  background-color: var(--green);
+  border: 2px solid var(--green);
+  color: white;
+  text-decoration: none;
+  margin: 4px 2px;
+  border-radius: 4px;
+  padding: 5px 5px;
+}
+
+input[type=submit]:focus {
+  background-color: #1b773b;
+}
