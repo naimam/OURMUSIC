@@ -1,6 +1,8 @@
 import os
 import random
 from dotenv import find_dotenv, load_dotenv
+
+load_dotenv(find_dotenv())
 from flask import Flask, render_template, request, redirect, Response, flash
 from spot import get_artist_info, get_lyrics
 from flask_login import (
@@ -170,4 +172,7 @@ def logout():
     return redirect("/")
 
 
-app.run(host="0.0.0.0", port=int(os.getenv("PORT", 8080)), debug=True)
+if __name__ == "__main__":
+    app.run(
+        host=os.getenv("IP", "0.0.0.0"), port=int(os.getenv("PORT", 8080)), debug=True
+    )
