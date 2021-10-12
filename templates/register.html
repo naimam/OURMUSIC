@@ -6,19 +6,22 @@
 {% block menu %} Register {% endblock %}
 
 {% block main %}
+<p>Enter a username below to create your account.</p>
     <form action="/register" method="POST">
         <input type="text" name="username" placeholder="Username" required>
         <input type="submit" value="Sign up!">
     </form>
     {% with messages = get_flashed_messages() %}
-    {% if messages %}
-        {% for message in messages %}
-            {{ message }}
-        {% endfor %}
-    {% endif %}
+        {% if messages %}
+            <div id="flashes" class=flashes>
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
     {% endwith %}
 
-    <h3>Have an account?</h3>
-    <h3><a href="{{url_for('login') }}">Log in Here</a></h3>
+    <p>Have an account?</p>
+    <p><a href="{{url_for('login') }}">Login Here!</a></p>
 
 {% endblock %}
