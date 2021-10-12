@@ -1,5 +1,6 @@
 Flask
 flask_login
+flask-heroku
 Flask-Login
 Flask-SQLAlchemy
 Jinja2
@@ -8,3 +9,4 @@ requests
 spotipy
 SQLAlchemy
 Werkzeug
+gunicorn
