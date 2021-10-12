@@ -113,6 +113,7 @@ def register():
 @app.route("/", methods=["POST", "GET"])
 @login_required
 def index():
+    currentUser = Person.query.filter_by(username=current_user.username).first()
     if request.method == "POST":
         artistID = request.form.get("artistId")
         try:
@@ -121,7 +122,6 @@ def index():
             flash("Invalid Spotify Artist ID!")
             return redirect("/")
 
-        currentUser = Person.query.filter_by(username=current_user.username).first()
         artist = Artist(artist_id=artistID, person=currentUser)
 
         db.session.add(artist)
@@ -129,7 +129,6 @@ def index():
 
         flash("Artist added!")
 
-    currentUser = Person.query.filter_by(username=current_user.username).first()
     user_artists = currentUser.artists
     user_artist_ids = []
     for artists in user_artists:
