@@ -1,11 +1,6 @@
 {% extends "base.html" %}
-
-
-	
 {% block title %}{{ current_user.username }}'s music!{% endblock %}
-
 {% block menu %} {{ current_user.username }}'s music! {% endblock %}
-
 {% block main %}
 	<div>
 		<p>Add an artist ID!</p>
@@ -22,8 +17,8 @@
 				</div>
 			{% endif %}
 		{% endwith %}
-
 	</div>
+
 	{% if artist_len == 0 %}
 		<p> Looks like you haven't added any artists yet... </p>
 	{% else %}
@@ -50,7 +45,6 @@
 						{%endfor%}
 					</ol>
 				</div>
-
 			</div>
 
 			<div class="column">
@@ -67,6 +61,5 @@
 			</div>
 		</div>
 	{% endif %}
-
 {% endblock %}
 		
