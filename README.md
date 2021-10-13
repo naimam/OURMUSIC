@@ -49,15 +49,7 @@
       export DATABASE_URL = "your-heroku-db-url"
       export SECRET_KEY = "your-super-secret-app-key"
     ```
-6. If want to run on localhost - comment out the following lines on app.py:
-   ```python
-   app.run(
-    # host='0.0.0.0',
-    # port=int(os.getenv('PORT', 8080)),
-    debug=True
-   )
-   ```
-7. Run app.py and follow the link to your browser to view the site!
+6. If want to run on localhost: run app.py and follow the link to your browser to view the site! 
 
 
 ## Technical Issues / Problems
